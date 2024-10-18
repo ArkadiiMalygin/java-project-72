@@ -1,3 +1,4 @@
+@import hexlet.code.util.NamedRoutes
 @import gg.jte.Content
 @param Content content
 

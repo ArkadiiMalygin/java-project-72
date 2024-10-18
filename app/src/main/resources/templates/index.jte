@@ -1,29 +1,33 @@
+@import hexlet.code.util.NamedRoutes
+@import hexlet.code.dto.urls.BuildUrlPage
+@param BuildUrlPage page
+
 @template.layout.page(
     content = @`
-        <h1 class="text-body-emphasis">Hello World!</h1>
-        @if(page.getErrors() != null)
-            <div class="mb-3">
-                <ul>
-                    @for(var validator : page.getErrors().values())
-                        @for(var error : validator)
-                            <li>${error.getMessage()}</li>
-                        @endfor
-                    @endfor
-                </ul>
-            </div>
-        @endif
+<%--        @if(page.getValidationErrors() != null)--%>
+<%--            <div class="mb-3">--%>
+<%--                <ul>--%>
+<%--                    @for(var validator : page.getValidationErrors().values())--%>
+<%--                        @for(var error : validator)--%>
+<%--                            <li>${error.getMessage()}</li>--%>
+<%--                        @endfor--%>
+<%--                    @endfor--%>
+<%--                </ul>--%>
+<%--            </div>--%>
+<%--        @endif--%>
+<%--        @if(!page.getErrors().isEmpty())--%>
+<%--            <div class="mb-3">--%>
+<%--                <ul>--%>
+<%--                    <li>${page.getErrors()}</li>--%>
+<%--                </ul>--%>
+<%--            </div>--%>
+<%--        @endif--%>
         <div class="mx-auto p-4 py-md-5">
-            <form action="${NamedRoutes.productsPath()}" method="post">
+            <form action="${NamedRoutes.urlsPath()}" method="post">
                 <div class="mb-3">
                     <label class="form-label">
-                        Название
-                        <input type="text" class="form-control" name="title" value="${page.getTitle()}" />
-                    </label>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">
-                        Цена
-                        <input type="text" class="form-control" name="price" value="${page.getPrice()}" />
+                        Your URl
+                        <input type="url" class="form-control" name="name" required value="${page.getName()}"/>
                     </label>
                 </div>
                 <input type="submit" class="btn btn-primary" value="Сохранить" />

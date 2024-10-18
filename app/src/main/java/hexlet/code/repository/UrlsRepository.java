@@ -26,4 +26,5 @@ public class UrlsRepository extends BaseRepository {
             }
         }
     }
+
 }

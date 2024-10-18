@@ -4,24 +4,23 @@
 
 @template.layout.page(
     content = @`
-<%--        @if(page.getValidationErrors() != null)--%>
-<%--            <div class="mb-3">--%>
-<%--                <ul>--%>
-<%--                    @for(var validator : page.getValidationErrors().values())--%>
-<%--                        @for(var error : validator)--%>
-<%--                            <li>${error.getMessage()}</li>--%>
-<%--                        @endfor--%>
-<%--                    @endfor--%>
-<%--                </ul>--%>
-<%--            </div>--%>
-<%--        @endif--%>
-<%--        @if(!page.getErrors().isEmpty())--%>
+        @if(page.getValidationErrors() != null)
+            <div class="mb-3">
+                <ul>
+                    @for(var validator : page.getValidationErrors().values())
+                        @for(var error : validator)
+                            <li>${error.getMessage()}</li>
+                        @endfor
+                    @endfor
+                </ul>
+            </div>
+<%--        @elseif(page.getErrors().isEmpty())--%>
 <%--            <div class="mb-3">--%>
 <%--                <ul>--%>
 <%--                    <li>${page.getErrors()}</li>--%>
 <%--                </ul>--%>
 <%--            </div>--%>
-<%--        @endif--%>
+        @endif
         <div class="mx-auto p-4 py-md-5">
             <form action="${NamedRoutes.urlsPath()}" method="post">
                 <div class="mb-3">

@@ -5,7 +5,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import gg.jte.ContentType;
 import gg.jte.TemplateEngine;
 import gg.jte.resolve.ResourceCodeResolver;
-import hexlet.code.controller.RootController;
+import hexlet.code.controller.UrlsController;
 import hexlet.code.repository.BaseRepository;
 import hexlet.code.util.NamedRoutes;
 import io.javalin.Javalin;
@@ -61,11 +61,13 @@ public class App {
             config.fileRenderer(new JavalinJte(createTemplateEngine()));
         });
 
-        app.get(NamedRoutes.rootPath(), RootController::build);
+        app.get(NamedRoutes.rootPath(), UrlsController::build);
 
-        app.post(NamedRoutes.urlsPath(), RootController::create);
+        app.post(NamedRoutes.urlsPath(), UrlsController::create);
 
-        app.get(NamedRoutes.urlsPath(), ctx -> ctx.result("added"));
+        app.get(NamedRoutes.urlsPath(), UrlsController::showAll);
+
+        app.get(NamedRoutes.urlPath("{id}"), UrlsController::show);
 
         return app;
     }

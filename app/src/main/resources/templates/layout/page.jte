@@ -23,7 +23,7 @@
             <div class="navbar-nav">
                 <a class="nav-link" href="/">Главная</a>
                 <a class="nav-link" href="/about">О блоге</a>
-                <a class="nav-link" href="/articles">Статьи</a>
+                <a class="nav-link" href="${NamedRoutes.urlsPath()}">List of URLS</a>
             </div>
         </div>
     </div>

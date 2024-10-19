@@ -1,9 +1,14 @@
 package hexlet.code.controller;
 
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 import hexlet.code.dto.urls.BuildUrlPage;
 import hexlet.code.dto.urls.UrlPage;
 import hexlet.code.dto.urls.UrlsPage;
 import hexlet.code.model.Url;
+import hexlet.code.repository.UrlChecksRepository;
 import hexlet.code.repository.UrlsRepository;
 import hexlet.code.util.NamedRoutes;
 import io.javalin.http.Context;
@@ -14,6 +19,8 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 import static io.javalin.rendering.template.TemplateUtil.model;
 
@@ -55,10 +62,10 @@ public class UrlsController {
 
     public static void show(Context ctx) throws SQLException {
         var id = ctx.pathParamAsClass("id", Long.class).get();
-        var post = UrlsRepository.find(id)
+        var url = UrlsRepository.find(id)
                 .orElseThrow(() -> new NotFoundResponse("Post not found"));
 
-        var page = new UrlPage(post);
+        var page = new UrlPage(url);
         ctx.render("urls/show.jte", model("page", page));
     }
 
@@ -66,5 +73,16 @@ public class UrlsController {
         var urls = UrlsRepository.getEntities();
         var page = new UrlsPage(urls);
         ctx.render("urls/showAll.jte", model("page", page));
+    }
+
+    public static void check(Context ctx) throws SQLException, UnirestException {
+        var urlId = ctx.pathParamAsClass("id", Long.class).get();
+        var url = UrlsRepository.find(urlId)
+                .orElseThrow(() -> new NotFoundResponse("Post not found"));
+        HttpResponse<JsonNode> jsonResponse = Unirest.get(url.getName()).asJson();
+
+        UrlChecksRepository.save(jsonResponse, urlId);
+
+        ctx.redirect(NamedRoutes.urlsPath());
     }
 }

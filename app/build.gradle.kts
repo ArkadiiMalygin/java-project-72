@@ -17,6 +17,7 @@ repositories {
 }
 
 dependencies {
+    implementation("com.mashape.unirest:unirest-java:1.4.9")
     implementation("gg.jte:jte:3.1.9")
     implementation("com.h2database:h2:2.2.220")
     implementation("com.zaxxer:HikariCP:5.0.1")

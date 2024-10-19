@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.sql.Timestamp;
 
@@ -11,6 +12,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class UrlCheck {
 
     private Long id;

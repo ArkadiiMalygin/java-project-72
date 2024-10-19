@@ -19,7 +19,7 @@ public class NamedRoutes {
     }
 
     public static String urlPathChecks(Long id) {
-        return urlPath(String.valueOf(id));
+        return urlPathChecks(String.valueOf(id));
     }
 
     public static String urlPathChecks(String id) {

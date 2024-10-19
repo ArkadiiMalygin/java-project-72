@@ -18,7 +18,8 @@ repositories {
 
 dependencies {
     implementation("org.postgresql:postgresql:42.7.4")
-    implementation("com.mashape.unirest:unirest-java:1.4.9")
+    implementation("org.jsoup:jsoup:1.18.1")
+    implementation("com.konghq:unirest-java:3.14.5")
     implementation("gg.jte:jte:3.1.9")
     implementation("com.h2database:h2:2.2.220")
     implementation("com.zaxxer:HikariCP:5.0.1")

@@ -1,21 +1,23 @@
 package hexlet.code.controller;
 
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
 import hexlet.code.dto.urls.BuildUrlPage;
 import hexlet.code.dto.urls.UrlPage;
 import hexlet.code.dto.urls.UrlsPage;
 import hexlet.code.model.Url;
+import hexlet.code.model.UrlCheck;
 import hexlet.code.repository.UrlChecksRepository;
 import hexlet.code.repository.UrlsRepository;
 import hexlet.code.util.NamedRoutes;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 import io.javalin.validation.ValidationException;
-import org.apache.commons.logging.Log;
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -25,6 +27,7 @@ import java.time.LocalDateTime;
 import java.util.logging.Logger;
 
 import static io.javalin.rendering.template.TemplateUtil.model;
+import static java.time.LocalDateTime.now;
 
 public class UrlsController {
     public static void build(Context ctx) {
@@ -65,8 +68,9 @@ public class UrlsController {
         var id = ctx.pathParamAsClass("id", Long.class).get();
         var url = UrlsRepository.find(id)
                 .orElseThrow(() -> new NotFoundResponse("Post not found"));
+        var urlCheck = UrlChecksRepository.find(id);
 
-        var page = new UrlPage(url);
+        var page = new UrlPage(url, urlCheck);
         ctx.render("urls/show.jte", model("page", page));
     }
 
@@ -76,14 +80,49 @@ public class UrlsController {
         ctx.render("urls/showAll.jte", model("page", page));
     }
 
-    public static void check(Context ctx) throws SQLException, UnirestException {
+    public static void check(Context ctx) throws SQLException, IOException {
         var urlId = ctx.pathParamAsClass("id", Long.class).get();
         var url = UrlsRepository.find(urlId)
                 .orElseThrow(() -> new NotFoundResponse("Post not found"));
-        (Unirest.get(url.getName()).header("Content-Type", "application/json").asJson());
-        HttpResponse<JsonNode> jsonResponse = Unirest.get(url.getName()).header("Content-Type", "application/json").asJson();
+//        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++");
+//        System.out.println(Unirest.get("http://localhost:7070/urls/").asJson().getStatus());
+//        System.out.println(Unirest.get("http://localhost:7070/urls/").asJson().getBody());
+//        System.out.println("==============================================");
+//        System.out.println(Unirest.get("http://localhost:7070/urls/").asJson().getHeaders());
+//        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 
-        UrlChecksRepository.save(jsonResponse, urlId);
+//        Unirest.setObjectMapper(new ObjectMapper() {
+//            com.fasterxml.jackson.databind.ObjectMapper mapper
+//                    = new com.fasterxml.jackson.databind.ObjectMapper();
+//
+//            public String writeValue(Object value) {
+//                return mapper.writeValueAsString(value);
+//            }
+//
+//            public <T> T readValue(String value, Class<T> valueType) {
+//                return mapper.readValue(value, valueType);
+//            }
+//        });
+//        Unirest.get(url.getName()).header("User-Agent", "HttpClient").header("accept", "application/json").asJson();
+//        HttpResponse<JsonNode> jsonResponse = Unirest.get(url.getName()).header("User-Agent", "HttpClient").header("accept", "application/json").asJson();
+        HttpResponse<String> jsonResponse = Unirest.get(url.getName()).header("User-Agent", "HttpClient").header("accept", "application/json").asString();
+        System.out.println(jsonResponse.getStatus());
+
+        Document doc = Jsoup.connect(url.getName()).get();
+        System.out.println("==============================================");
+        System.out.println(doc.select("h1"));
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        var check = new UrlCheck();
+
+        check.setUrlId(urlId);
+        check.setStatusCode(jsonResponse.getStatus());//todo change it
+        check.setH1(doc.select("h1").text());
+        check.setTitle(doc.title());
+        check.setDescription(String.valueOf(doc.selectFirst("meta[name=description]")));
+        System.out.println("==============================================");
+        System.out.println(check.toString());
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        UrlChecksRepository.save(check);
 
         ctx.redirect(NamedRoutes.urlPath(urlId));
     }

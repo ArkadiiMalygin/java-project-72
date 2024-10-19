@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
 
 public class App {
 
+    static String DEBUG = "true";
+
     private static int getPort() {
         String port = System.getenv().getOrDefault("PORT", "7070");
         return Integer.valueOf(port);
@@ -39,21 +41,40 @@ public class App {
         }
     }
 
-    public static Javalin getApp() throws IOException, SQLException {
-
-        var hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl("jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
-
-        var dataSource = new HikariDataSource(hikariConfig);
+    public static Javalin getApp() throws IOException, SQLException, ClassNotFoundException {
         var sql = readResourceFile("schema.sql");
+        if (DEBUG.equals("true")) {
+            var hikariConfig = new HikariConfig();
+            hikariConfig.setJdbcUrl("jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
 
-        //log.info(sql);
-        try (var connection = dataSource.getConnection();
-            var statement = connection.createStatement()) {
-            statement.execute(sql);
+            var dataSource = new HikariDataSource(hikariConfig);
+
+            try (var connection = dataSource.getConnection();
+                 var statement = connection.createStatement()) {
+                statement.execute(sql);
+            }
+
+            BaseRepository.dataSource = dataSource;
+        } else {
+
+            HikariConfig config = new HikariConfig();
+
+            config.setDataSourceClassName("org.postgresql.ds.PGSimpleDataSource");
+            config.addDataSourceProperty("serverName", "xxxxxxxxxxxxxxxxxx");
+            config.addDataSourceProperty("portNumber", "5432");
+            config.addDataSourceProperty("databaseName", "xxxxxxxxxx");
+            config.addDataSourceProperty("user", "xxxxxxxxxxxxxxxxxxxxxxxxxx");
+            config.addDataSourceProperty("password", "xxxxxxxxxxxxx");
+
+            // postgress configuration for Hikari
+            HikariDataSource ds = new HikariDataSource(config);
+
+            BaseRepository.dataSource = ds;
+
         }
 
-        BaseRepository.dataSource = dataSource;
+
+        //log.info(sql);
 
 
         var app = Javalin.create(config -> {
@@ -69,10 +90,12 @@ public class App {
 
         app.get(NamedRoutes.urlPath("{id}"), UrlsController::show);
 
+        app.post(NamedRoutes.urlPathChecks("{id}"), UrlsController::check);
+
         return app;
     }
 
-    public static void main(String[] args) throws IOException, SQLException {
+    public static void main(String[] args) throws IOException, SQLException, ClassNotFoundException {
         Javalin app = getApp();
         app.start(getPort());
     }

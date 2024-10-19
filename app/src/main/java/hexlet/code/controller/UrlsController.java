@@ -14,6 +14,7 @@ import hexlet.code.util.NamedRoutes;
 import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 import io.javalin.validation.ValidationException;
+import org.apache.commons.logging.Log;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -21,6 +22,7 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.logging.Logger;
 
 import static io.javalin.rendering.template.TemplateUtil.model;
 
@@ -35,7 +37,8 @@ public class UrlsController {
             var name = ctx.formParam("name");
             var urlData = new URL(name);
             var uriData = urlData.toURI();
-            var url = new Url(uriData.toString());
+            var normalizedUri = uriData.normalize();
+            var url = new Url(normalizedUri.getScheme() + "://" + normalizedUri.getHost());
             UrlsRepository.save(url);
             ctx.redirect(NamedRoutes.urlsPath());
 
@@ -45,7 +48,7 @@ public class UrlsController {
             var page = new BuildUrlPage(name);
             page.setValidationErrors(e.getErrors());
             ctx.render("index.jte", model("page", page)).status(422);
-        } catch (URISyntaxException e) {
+        } catch (URISyntaxException | MalformedURLException e) {
             var name = ctx.formParam("name");
             var page = new BuildUrlPage(name);
             page.setErrors("Некорректный URL");
@@ -55,8 +58,6 @@ public class UrlsController {
             var page = new BuildUrlPage(name);
             page.setErrors("DB has not process ur ULR");
             ctx.render("index.jte", model("page", page)).status(418);
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -79,10 +80,11 @@ public class UrlsController {
         var urlId = ctx.pathParamAsClass("id", Long.class).get();
         var url = UrlsRepository.find(urlId)
                 .orElseThrow(() -> new NotFoundResponse("Post not found"));
-        HttpResponse<JsonNode> jsonResponse = Unirest.get(url.getName()).asJson();
+        (Unirest.get(url.getName()).header("Content-Type", "application/json").asJson());
+        HttpResponse<JsonNode> jsonResponse = Unirest.get(url.getName()).header("Content-Type", "application/json").asJson();
 
         UrlChecksRepository.save(jsonResponse, urlId);
 
-        ctx.redirect(NamedRoutes.urlsPath());
+        ctx.redirect(NamedRoutes.urlPath(urlId));
     }
 }

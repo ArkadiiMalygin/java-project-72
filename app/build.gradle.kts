@@ -17,6 +17,7 @@ repositories {
 }
 
 dependencies {
+    implementation("org.postgresql:postgresql:42.7.4")
     implementation("com.mashape.unirest:unirest-java:1.4.9")
     implementation("gg.jte:jte:3.1.9")
     implementation("com.h2database:h2:2.2.220")
@@ -27,6 +28,8 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:2.0.7")
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.assertj:assertj-core:3.25.3")
+
 }
 
 tasks.test {

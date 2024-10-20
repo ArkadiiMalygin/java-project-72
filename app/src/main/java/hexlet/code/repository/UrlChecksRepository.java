@@ -31,7 +31,7 @@ public class UrlChecksRepository extends BaseRepository {
 
             preparedStatement.executeUpdate();
             var generatedKeys = preparedStatement.getGeneratedKeys();
-            if(generatedKeys.next()) {
+            if (generatedKeys.next()) {
                 System.out.println(check.getUrlId() + " -> " + generatedKeys.getLong(1));
             } else {
                 throw new SQLException("DB has not returned an id after saving an entity");

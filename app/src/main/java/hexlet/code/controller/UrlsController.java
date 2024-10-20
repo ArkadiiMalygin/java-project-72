@@ -12,7 +12,6 @@ import io.javalin.http.Context;
 import io.javalin.http.NotFoundResponse;
 import io.javalin.validation.ValidationException;
 import kong.unirest.HttpResponse;
-import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -22,9 +21,6 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.util.logging.Logger;
 
 import static io.javalin.rendering.template.TemplateUtil.model;
 import static java.time.LocalDateTime.now;
@@ -109,23 +105,28 @@ public class UrlsController {
 //        Unirest.get(url.getName()).header("User-Agent", "HttpClient").header("accept", "application/json").asJson();
 //        HttpResponse<JsonNode> jsonResponse = Unirest.get(url.getName()).header("User-Agent", "HttpClient").header("accept", "application/json").asJson();
         HttpResponse<String> jsonResponse = Unirest.get(url.getName()).header("User-Agent", "HttpClient").header("accept", "application/json").asString();
-
-        Document doc = Jsoup.connect(url.getName()).get();//todo change it
         var check = new UrlCheck();
-
-        check.setUrlId(urlId);
         check.setStatusCode(jsonResponse.getStatus());//todo change it
-        if (doc.select("h1").text().length() > LIMIT) {
-            check.setH1(doc.select("h1").text().substring(0, LIMIT) + "...");
-        } else {
-            check.setH1(doc.select("h1").text());
+        try {
+            Document doc = Jsoup.connect(url.getName()).get();//todo change it
+            if (doc.select("h1").text().length() > LIMIT) {
+                check.setH1(doc.select("h1").text().substring(0, LIMIT) + "...");
+            } else {
+                check.setH1(doc.select("h1").text());
+            }
+            if (doc.title().length() > LIMIT) {
+                check.setTitle(doc.title().substring(0, LIMIT) + "...");
+            } else {
+                check.setTitle(doc.title());
+            }
+            check.setDescription(String.valueOf(doc.selectFirst("meta[name=description]")));
+        } catch (IOException ignored) {
+            if (jsonResponse.getStatus() == 200) {
+                check.setStatusCode(418);//todo change it
+            }
         }
-        if (doc.title().length() > LIMIT) {
-            check.setTitle(doc.title().substring(0, LIMIT) + "...");
-        } else {
-            check.setTitle(doc.title());
-        }
-        check.setDescription(String.valueOf(doc.selectFirst("meta[name=description]")));
+        check.setUrlId(urlId);
+
         UrlChecksRepository.save(check);
 
         ctx.redirect(NamedRoutes.urlPath(urlId));

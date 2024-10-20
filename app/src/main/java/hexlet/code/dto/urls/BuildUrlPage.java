@@ -2,7 +2,6 @@ package hexlet.code.dto.urls;
 
 import hexlet.code.dto.BasePage;
 import io.javalin.validation.ValidationError;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

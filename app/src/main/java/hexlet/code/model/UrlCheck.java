@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 import java.sql.Timestamp;
 
@@ -12,7 +11,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Getter
 @Setter
-public class UrlCheck {
+public final class UrlCheck {
 
     private Long id;
 
@@ -30,13 +29,13 @@ public class UrlCheck {
 
     @Override
     public String toString() {
-        return "Check" +
-                "id=" + id +
-                ", statusCode=" + statusCode +
-                ", title='" + title + '\'' +
-                ", h1='" + h1 + '\'' +
-                ", description='" + description + '\'' +
-                ", urlId=" + urlId +
-                ", createdAt=" + createdAt;
+        return "Check"
+                + "id=" + id
+                + ", statusCode=" + statusCode
+                + ", title='" + title + '\''
+                + ", h1='" + h1 + '\''
+                + ", description='" + description + '\''
+                + ", urlId=" + urlId
+                + ", createdAt=" + createdAt;
     }
 }

@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 public class App {
 
-    static String DEBUG = "true";
+    public static final String DEBUG = "true";
 
     private static int getPort() {
         String port = System.getenv().getOrDefault("PORT", "7070");

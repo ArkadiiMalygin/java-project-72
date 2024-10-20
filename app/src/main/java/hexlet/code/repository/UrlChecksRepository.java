@@ -1,24 +1,24 @@
 package hexlet.code.repository;
 
 
-import hexlet.code.model.Url;
+
 import hexlet.code.model.UrlCheck;
-import kong.unirest.HttpResponse;
-import kong.unirest.JsonNode;
+
 
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
 
 import static java.time.LocalDateTime.now;
 
 public class UrlChecksRepository extends BaseRepository {
     public static void save(UrlCheck check) throws SQLException {
-        var sql = "INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at) VALUES (?, ?, ?, ?, ?, ?)";
+        var sql = "INSERT INTO url_checks (url_id, status_code, h1, title, description, created_at) "
+                + "VALUES (?, ?, ?, ?, ?, ?)";
         try (var conn = dataSource.getConnection();
              var preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             preparedStatement.setLong(1, check.getUrlId());

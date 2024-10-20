@@ -10,6 +10,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static java.time.LocalDateTime.now;
@@ -37,13 +39,14 @@ public class UrlChecksRepository extends BaseRepository {
         }
     }
 
-    public static Optional<UrlCheck> find(Long urlId) throws SQLException {
+    public static List<UrlCheck> find(Long urlId) throws SQLException {
+        var result = new ArrayList<UrlCheck>();
         var sql = "SELECT * FROM url_checks WHERE url_id = ?";
         try (var conn = dataSource.getConnection();
              var stmt = conn.prepareStatement(sql)) {
             stmt.setLong(1, urlId);
             var resultSet = stmt.executeQuery();
-            if (resultSet.next()) {
+            while (resultSet.next()) {
                 var id = resultSet.getLong("id");
                 var statusCode = resultSet.getInt("status_code");
                 var h1 = resultSet.getString("h1");
@@ -53,9 +56,9 @@ public class UrlChecksRepository extends BaseRepository {
 
                 var urlCheck = new UrlCheck(id, statusCode, title, h1, description, urlId, createdAt);
 
-                return Optional.of(urlCheck);
+                result.add(urlCheck);
             }
-            return Optional.empty();
+            return result;
         }
     }
 }

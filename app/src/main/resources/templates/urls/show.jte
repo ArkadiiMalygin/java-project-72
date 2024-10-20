@@ -1,3 +1,4 @@
+@import hexlet.code.model.UrlCheck
 @import hexlet.code.util.NamedRoutes
 @import hexlet.code.dto.urls.UrlPage
 @param UrlPage page
@@ -7,11 +8,11 @@
         <div class="mx-auto p-4 py-md-5">
             <h1>${page.getUrl().toString()}</h1>
         </div>
-    @if(page.getUrlCheck().isPresent())
+    @for(UrlCheck inst : page.getUrlCheck())
         <div class="mx-auto p-4 py-md-5">
-            <h1>${page.getUrlCheck().toString()}</h1>
+            <h1>${inst.toString()}</h1>
         </div>
-    @endif
+    @endfor
         <div class="mx-auto p-4 py-md-5">
             <form action="${NamedRoutes.urlPathChecks(page.getUrl().getId())}" method="post">
                 <input type="submit" class="btn btn-primary" value="Check URl" />

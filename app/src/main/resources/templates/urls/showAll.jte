@@ -15,7 +15,7 @@ content = @`
                             ${url.getId()}
                         </td>
                         <td>
-                            ${url.getName()}
+                            <a href="${NamedRoutes.urlPath(url.getId())}">${url.getName()}</a>
                         </td>
                     </tr>
                 @endfor

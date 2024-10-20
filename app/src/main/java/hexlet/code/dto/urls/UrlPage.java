@@ -6,11 +6,12 @@ import hexlet.code.model.UrlCheck;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
 @Getter
 public class UrlPage extends BasePage {
     private Url url;
-    private Optional<UrlCheck> urlCheck;
+    private List<UrlCheck> urlCheck;
 }

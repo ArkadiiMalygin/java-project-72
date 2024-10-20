@@ -30,6 +30,9 @@ import static io.javalin.rendering.template.TemplateUtil.model;
 import static java.time.LocalDateTime.now;
 
 public class UrlsController {
+
+    public static final int LIMIT = 250;
+
     public static void build(Context ctx) {
         var page = new BuildUrlPage();
         ctx.render("index.jte", model("page", page));
@@ -106,22 +109,23 @@ public class UrlsController {
 //        Unirest.get(url.getName()).header("User-Agent", "HttpClient").header("accept", "application/json").asJson();
 //        HttpResponse<JsonNode> jsonResponse = Unirest.get(url.getName()).header("User-Agent", "HttpClient").header("accept", "application/json").asJson();
         HttpResponse<String> jsonResponse = Unirest.get(url.getName()).header("User-Agent", "HttpClient").header("accept", "application/json").asString();
-        System.out.println(jsonResponse.getStatus());
 
-        Document doc = Jsoup.connect(url.getName()).get();
-        System.out.println("==============================================");
-        System.out.println(doc.select("h1"));
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        Document doc = Jsoup.connect(url.getName()).get();//todo change it
         var check = new UrlCheck();
 
         check.setUrlId(urlId);
         check.setStatusCode(jsonResponse.getStatus());//todo change it
-        check.setH1(doc.select("h1").text());
-        check.setTitle(doc.title());
+        if (doc.select("h1").text().length() > LIMIT) {
+            check.setH1(doc.select("h1").text().substring(0, LIMIT) + "...");
+        } else {
+            check.setH1(doc.select("h1").text());
+        }
+        if (doc.title().length() > LIMIT) {
+            check.setTitle(doc.title().substring(0, LIMIT) + "...");
+        } else {
+            check.setTitle(doc.title());
+        }
         check.setDescription(String.valueOf(doc.selectFirst("meta[name=description]")));
-        System.out.println("==============================================");
-        System.out.println(check.toString());
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         UrlChecksRepository.save(check);
 
         ctx.redirect(NamedRoutes.urlPath(urlId));

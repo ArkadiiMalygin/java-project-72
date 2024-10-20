@@ -22,7 +22,6 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <div class="navbar-nav">
                 <a class="nav-link" href="/">Главная</a>
-                <a class="nav-link" href="/about">О блоге</a>
                 <a class="nav-link" href="${NamedRoutes.urlsPath()}">List of URLS</a>
             </div>
         </div>
@@ -37,7 +36,7 @@
     <div class="container-xl">
         <div class="text-center">
             created by
-            <a href="https://ru.hexlet.io" target="_blank">Hexlet</a>
+            <a href="#" target="_blank">Arkadii Malygin</a>
         </div>
     </div>
 </footer>

@@ -52,7 +52,7 @@ public class AppTest {
     @Test
     public void testCreateUrl() {
         JavalinTest.test(app, (server, client) -> {
-            var requestBody = "name= https://www.google.com/search?q";
+            var requestBody = "url= https://www.google.com/search?q";
             var response = client.post("/urls", requestBody);
             assertThat(response.code()).isEqualTo(200);
             assertThat(response.body().string()).contains("google.com");

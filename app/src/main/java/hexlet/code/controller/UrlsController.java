@@ -35,7 +35,7 @@ public class UrlsController {
 
     public static void create(Context ctx) {
         try {
-            var name = ctx.formParam("name");
+            var name = ctx.formParam("url");
             var urlData = new URL(name);
             var uriData = urlData.toURI();
             var normalizedUri = uriData.normalize();
@@ -45,17 +45,17 @@ public class UrlsController {
 
 
         } catch (ValidationException e) {
-            var name = ctx.formParam("name");
+            var name = ctx.formParam("url");
             var page = new BuildUrlPage(name);
             page.setValidationErrors(e.getErrors());
             ctx.render("index.jte", model("page", page)).status(422);
         } catch (URISyntaxException | MalformedURLException e) {
-            var name = ctx.formParam("name");
+            var name = ctx.formParam("url");
             var page = new BuildUrlPage(name);
             page.setErrors("Некорректный URL");
             ctx.render("index.jte", model("page", page)).status(422);
         } catch (SQLException e) {
-            var name = ctx.formParam("name");
+            var name = ctx.formParam("url");
             var page = new BuildUrlPage(name);
             page.setErrors("DB has not process ur ULR");
             ctx.render("index.jte", model("page", page)).status(418);

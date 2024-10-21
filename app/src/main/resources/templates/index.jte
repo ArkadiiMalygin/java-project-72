@@ -26,7 +26,7 @@
                 <div class="mb-3">
                     <label class="form-label">
                         Your URl
-                        <input type="url" class="form-control" name="name" required value="${page.getName()}"/>
+                        <input type="url" class="form-control" name="url" required value="${page.getName()}"/>
                     </label>
                 </div>
                 <input type="submit" class="btn btn-primary" value="Сохранить" />

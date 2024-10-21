@@ -40,6 +40,9 @@ public class UrlsController {
             var uriData = urlData.toURI();
             var normalizedUri = uriData.normalize();
             var url = new Url(normalizedUri.getScheme() + "://" + normalizedUri.getHost());
+            if (normalizedUri.getPort() > LIMIT) {
+                url.setName(url.getName().concat(":" + normalizedUri.getPort()));
+            }
             UrlsRepository.save(url);
             ctx.redirect(NamedRoutes.urlsPath());
 

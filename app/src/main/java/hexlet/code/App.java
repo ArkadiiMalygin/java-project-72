@@ -41,7 +41,7 @@ public class App {
         }
     }
 
-    public static Javalin getApp() throws IOException, SQLException, ClassNotFoundException {
+    public static Javalin getApp() throws IOException, SQLException {
         var sql = readResourceFile("schema.sql");
         if (DEBUG.equals("true")) {
             var hikariConfig = new HikariConfig();

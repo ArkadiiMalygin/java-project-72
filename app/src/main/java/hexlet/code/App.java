@@ -41,11 +41,16 @@ public class App {
         }
     }
 
+    private static String getJdbcUrl() {
+        String port = System.getenv().getOrDefault("JdbcUrl", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
+        return port;
+    }
+
     public static Javalin getApp() throws IOException, SQLException {
         var sql = readResourceFile("schema.sql");
-        if (DEBUG.equals("true")) {
-            var hikariConfig = new HikariConfig();
-            hikariConfig.setJdbcUrl("jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
+        var hikariConfig = new HikariConfig();
+        hikariConfig.setJdbcUrl(getJdbcUrl());
+        if (getJdbcUrl().equals("jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;")) {
 
             var dataSource = new HikariDataSource(hikariConfig);
 
@@ -57,17 +62,13 @@ public class App {
             BaseRepository.dataSource = dataSource;
         } else {
 
-            HikariConfig config = new HikariConfig();
 
-            config.setDataSourceClassName("org.postgresql.ds.PGSimpleDataSource");
-            config.addDataSourceProperty("serverName", "xxxxxxxxxxxxxxxxxx");
-            config.addDataSourceProperty("portNumber", "5432");
-            config.addDataSourceProperty("databaseName", "xxxxxxxxxx");
-            config.addDataSourceProperty("user", "xxxxxxxxxxxxxxxxxxxxxxxxxx");
-            config.addDataSourceProperty("password", "xxxxxxxxxxxxx");
-
+            var userName = System.getenv("JDBC_DATABASE_USERNAME");
+            var password = System.getenv("JDBC_DATABASE_PASSWORD");
+            hikariConfig.setUsername(userName);
+            hikariConfig.setPassword(password);
             // postgress configuration for Hikari
-            HikariDataSource ds = new HikariDataSource(config);
+            HikariDataSource ds = new HikariDataSource(hikariConfig);
 
             BaseRepository.dataSource = ds;
 

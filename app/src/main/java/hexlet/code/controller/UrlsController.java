@@ -37,7 +37,7 @@ public class UrlsController {
         try {
             var name = ctx.formParam("url");
             var urlData = new URL(name);
-            var uriData = urlData.toURI();//
+            var uriData = urlData.toURI();
 
             var normalizedUrl = getNormalizedURL(urlData);
             var url = new Url(normalizedUrl);
@@ -138,7 +138,7 @@ public class UrlsController {
         var h1 = h1Temp == null ? "" : h1Temp.text();
 
         var descriptionTemp = doc.selectFirst("meta[name=description]");
-        var description = descriptionTemp == null ? "" :descriptionTemp.text();
+        var description = descriptionTemp == null ? "" : descriptionTemp.text();
 
         var check = new UrlCheck();
         check.setStatusCode(statusCode);

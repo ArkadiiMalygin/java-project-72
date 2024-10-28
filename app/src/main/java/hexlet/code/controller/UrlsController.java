@@ -37,12 +37,10 @@ public class UrlsController {
         try {
             var name = ctx.formParam("url");
             var urlData = new URL(name);
-            var uriData = urlData.toURI();
-            var normalizedUri = uriData.normalize();
-            var url = new Url(normalizedUri.getScheme() + "://" + normalizedUri.getHost());
-            if (normalizedUri.getPort() > LIMIT) {
-                url.setName(url.getName().concat(":" + normalizedUri.getPort()));
-            }
+            var uriData = urlData.toURI();//
+
+            var normalizedUrl = getNormalizedURL(urlData);
+            var url = new Url(normalizedUrl);
             UrlsRepository.save(url);
             ctx.redirect(NamedRoutes.urlsPath());
 
@@ -107,32 +105,58 @@ public class UrlsController {
 //        Unirest.get(url.getName()).header("User-Agent", "HttpClient").header("accept", "application/json").asJson();
 //        HttpResponse<JsonNode> jsonResponse = Unirest.get(url.getName()).header("User-Agent", "HttpClient")
 //        .header("accept", "application/json").asJson();
-        HttpResponse<String> jsonResponse = Unirest.get(url.getName()).header("User-Agent", "HttpClient")
-                .header("accept", "application/json").asString();
-        var check = new UrlCheck();
-        check.setStatusCode(jsonResponse.getStatus()); //todo change it
-        try {
-            Document doc = Jsoup.connect(url.getName()).get(); //todo change it
-            if (doc.select("h1").text().length() > LIMIT) {
-                check.setH1(doc.select("h1").text().substring(0, LIMIT) + "...");
-            } else {
-                check.setH1(doc.select("h1").text());
-            }
-            if (doc.title().length() > LIMIT) {
-                check.setTitle(doc.title().substring(0, LIMIT) + "...");
-            } else {
-                check.setTitle(doc.title());
-            }
-            check.setDescription(String.valueOf(doc.selectFirst("meta[name=description]")));
-        } catch (IOException ignored) {
-            if (jsonResponse.getStatus() == 200) {
-                check.setStatusCode(418); //todo change it
-            }
-        }
-        check.setUrlId(urlId);
+        //Working part
+//        HttpResponse<String> jsonResponse = Unirest.get(url.getName()).header("User-Agent", "HttpClient")
+//                .header("accept", "application/json").asString();
+//        var check = new UrlCheck();
+//        check.setStatusCode(jsonResponse.getStatus()); //todo change it
+//        try {
+//            Document doc = Jsoup.connect(url.getName()).get(); //todo change it
+//            if (doc.select("h1").text().length() > LIMIT) {
+//                check.setH1(doc.select("h1").text().substring(0, LIMIT) + "...");
+//            } else {
+//                check.setH1(doc.select("h1").text());
+//            }
+//            if (doc.title().length() > LIMIT) {
+//                check.setTitle(doc.title().substring(0, LIMIT) + "...");
+//            } else {
+//                check.setTitle(doc.title());
+//            }
+//            check.setDescription(String.valueOf(doc.selectFirst("meta[name=description]")));
+//        } catch (IOException ignored) {
+//            if (jsonResponse.getStatus() == 200) {
+//                check.setStatusCode(418); //todo change it
+//            }
+//        }
+//        check.setUrlId(urlId);
+        HttpResponse<String> response = Unirest.get(url.getName()).asString();
+        Document doc = Jsoup.parse(response.getBody());
+        var statusCode = response.getStatus();
+        var title = doc.title();
 
+        var h1Temp = doc.selectFirst("h1");
+        var h1 = h1Temp == null ? "" : h1Temp.text();
+
+        var descriptionTemp = doc.selectFirst("meta[name=description]");
+        var description = descriptionTemp == null ? "" :descriptionTemp.text();
+
+        var check = new UrlCheck();
+        check.setStatusCode(statusCode);
+        check.setTitle(title);
+        check.setH1(h1);
+        check.setDescription(description);
+        check.setUrlId(urlId);
         UrlChecksRepository.save(check);
 
         ctx.redirect(NamedRoutes.urlPath(urlId));
+    }
+
+    public static String getNormalizedURL(URL url) {
+        String protocol = url.getProtocol();
+        String symbols = "://";
+        String host = url.getHost();
+        String colonBeforePort = url.getPort() == -1 ? "" : ":";
+        String port = url.getPort() == -1 ? "" : String.valueOf(url.getPort());
+        return protocol + symbols + host + colonBeforePort + port;
     }
 }

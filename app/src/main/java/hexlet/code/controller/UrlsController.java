@@ -83,7 +83,7 @@ public class UrlsController {
             var urlsCheck = new UrlCheck();
             var mayBeUrlsCheck = urlsChecks.stream().filter(uc -> uc.getUrlId() == url.getId())
                     .toList().stream().max(Comparator.comparing(UrlCheck::getCreatedAt));
-            if(mayBeUrlsCheck.isPresent()) {
+            if (mayBeUrlsCheck.isPresent()) {
                 urlsCheck = mayBeUrlsCheck.get();
             }
             urlAndItsLastCheck.put(url, urlsCheck);

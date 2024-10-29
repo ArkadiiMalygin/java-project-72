@@ -9,22 +9,18 @@ content = @`
             <h1>All urls</h1>
 
             <table class="table table-striped">
-                @for(var url : page.getUrls())
+                @for(var entry : page.getUrlsWithCheckPairs().entrySet())
 
                     <tr>
                         <td>
-                            ${url.getId()}
+                            ${entry.getKey().getId()}
                         </td>
                         <td>
-                            <a href="${NamedRoutes.urlPath(url.getId())}">${url.getName()}</a>
+                            <a href="${NamedRoutes.urlPath(entry.getKey().getId())}">${entry.getKey().getName()}</a>
                         </td>
-                        @for(var urlCheck : page.getUrlsChecks())
-                            @if (urlCheck.getUrlId() == url.getId())
-                            <td>
-                                ${urlCheck.getStatusCode()}
-                            </td>
-                            @endif
-                        @endfor
+                        <td>
+                            ${entry.getValue().getStatusCode()}
+                        </td>
                     </tr>
                 @endfor
             </table>

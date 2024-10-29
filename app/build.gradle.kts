@@ -42,7 +42,7 @@ tasks.test {
     testLogging {
         exceptionFormat = TestExceptionFormat.FULL
         events = mutableSetOf(TestLogEvent.FAILED, TestLogEvent.PASSED, TestLogEvent.SKIPPED)
-        // showStackTraces = true
+        showStackTraces = true
         // showCauses = true
         showStandardStreams = true
     }

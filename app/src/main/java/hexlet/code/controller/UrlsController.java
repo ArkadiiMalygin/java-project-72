@@ -21,6 +21,8 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.Comparator;
+import java.util.HashMap;
 
 import static io.javalin.rendering.template.TemplateUtil.model;
 
@@ -76,7 +78,17 @@ public class UrlsController {
     public static void showAll(Context ctx) throws SQLException {
         var urls = UrlsRepository.getEntities();
         var urlsChecks = UrlChecksRepository.getEntities();
-        var page = new UrlsPage(urls, urlsChecks);
+        HashMap<Url, UrlCheck> urlAndItsLastCheck = new HashMap<>();
+        for (var url : urls) {
+            var urlsCheck = new UrlCheck();
+            var mayBeUrlsCheck = urlsChecks.stream().filter(uc -> uc.getUrlId() == url.getId())
+                    .toList().stream().max(Comparator.comparing(UrlCheck::getCreatedAt));
+            if(mayBeUrlsCheck.isPresent()) {
+                urlsCheck = mayBeUrlsCheck.get();
+            }
+            urlAndItsLastCheck.put(url, urlsCheck);
+        }
+        var page = new UrlsPage(urlAndItsLastCheck);
         ctx.render("urls/showAll.jte", model("page", page));
     }
 

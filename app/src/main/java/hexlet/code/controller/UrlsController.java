@@ -75,7 +75,8 @@ public class UrlsController {
 
     public static void showAll(Context ctx) throws SQLException {
         var urls = UrlsRepository.getEntities();
-        var page = new UrlsPage(urls);
+        var urlsChecks = UrlChecksRepository.getEntities();
+        var page = new UrlsPage(urls, urlsChecks);
         ctx.render("urls/showAll.jte", model("page", page));
     }
 
@@ -138,7 +139,7 @@ public class UrlsController {
         var h1 = h1Temp == null ? "" : h1Temp.text();
 
         var descriptionTemp = doc.selectFirst("meta[name=description]");
-        var description = descriptionTemp == null ? "" : descriptionTemp.text();
+        var description = descriptionTemp == null ? "" : descriptionTemp.attr("content");
 
         var check = new UrlCheck();
         check.setStatusCode(statusCode);

@@ -10,6 +10,7 @@ content = @`
 
             <table class="table table-striped">
                 @for(var url : page.getUrls())
+
                     <tr>
                         <td>
                             ${url.getId()}
@@ -17,6 +18,13 @@ content = @`
                         <td>
                             <a href="${NamedRoutes.urlPath(url.getId())}">${url.getName()}</a>
                         </td>
+                        @for(var urlCheck : page.getUrlsChecks())
+                            @if (urlCheck.getUrlId() == url.getId())
+                            <td>
+                                ${urlCheck.getStatusCode()}
+                            </td>
+                            @endif
+                        @endfor
                     </tr>
                 @endfor
             </table>

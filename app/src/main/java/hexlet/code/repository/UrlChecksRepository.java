@@ -2,6 +2,7 @@ package hexlet.code.repository;
 
 
 
+import hexlet.code.model.Url;
 import hexlet.code.model.UrlCheck;
 
 
@@ -53,6 +54,29 @@ public class UrlChecksRepository extends BaseRepository {
                 var title = resultSet.getString("title");
                 var description = resultSet.getString("description");
                 var createdAt = resultSet.getTimestamp("created_at");
+
+                var urlCheck = new UrlCheck(id, statusCode, title, h1, description, urlId, createdAt);
+
+                result.add(urlCheck);
+            }
+            return result;
+        }
+    }
+
+    public static List<UrlCheck> getEntities() throws SQLException {
+        var sql = "SELECT * FROM url_checks";
+        try (var conn = dataSource.getConnection();
+             var stmt = conn.prepareStatement(sql)) {
+            var resultSet = stmt.executeQuery();
+            var result = new ArrayList<UrlCheck>();
+            while (resultSet.next()) {
+                var id = resultSet.getLong("id");
+                var statusCode = resultSet.getInt("status_code");
+                var h1 = resultSet.getString("h1");
+                var title = resultSet.getString("title");
+                var description = resultSet.getString("description");
+                var createdAt = resultSet.getTimestamp("created_at");
+                var urlId = resultSet.getLong("url_id");
 
                 var urlCheck = new UrlCheck(id, statusCode, title, h1, description, urlId, createdAt);
 

@@ -68,9 +68,14 @@ public class App {
             hikariConfig.setUsername(userName);
             hikariConfig.setPassword(password);
             // postgress configuration for Hikari
-            HikariDataSource ds = new HikariDataSource(hikariConfig);
+            HikariDataSource dataSource = new HikariDataSource(hikariConfig);
 
-            BaseRepository.dataSource = ds;
+            try (var connection = dataSource.getConnection();
+                 var statement = connection.createStatement()) {
+                statement.execute(sql);
+            }
+
+            BaseRepository.dataSource = dataSource;
 
         }
 

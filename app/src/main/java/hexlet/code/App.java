@@ -50,34 +50,24 @@ public class App {
         var sql = readResourceFile("schema.sql");
         var hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl(getJdbcUrl());
-        if (getJdbcUrl().equals("jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;")) {
-
-            var dataSource = new HikariDataSource(hikariConfig);
-
-            try (var connection = dataSource.getConnection();
-                 var statement = connection.createStatement()) {
-                statement.execute(sql);
-            }
-
-            BaseRepository.dataSource = dataSource;
-        } else {
-
-
+        if (!getJdbcUrl().equals("jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;")) {
             var userName = System.getenv("JDBC_DATABASE_USERNAME");
             var password = System.getenv("JDBC_DATABASE_PASSWORD");
             hikariConfig.setUsername(userName);
             hikariConfig.setPassword(password);
             // postgress configuration for Hikari
-            HikariDataSource dataSource = new HikariDataSource(hikariConfig);
-
-            try (var connection = dataSource.getConnection();
-                 var statement = connection.createStatement()) {
-                statement.execute(sql);
-            }
-
-            BaseRepository.dataSource = dataSource;
 
         }
+
+        HikariDataSource dataSource = new HikariDataSource(hikariConfig);
+
+
+        try (var connection = dataSource.getConnection();
+             var statement = connection.createStatement()) {
+            statement.execute(sql);
+        }
+
+        BaseRepository.dataSource = dataSource;
 
 
         //log.info(sql);

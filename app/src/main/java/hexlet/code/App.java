@@ -56,7 +56,7 @@ public class App {
             hikariConfig.setUsername(userName);
             hikariConfig.setPassword(password);
             // postgress configuration for Hikari
-
+            sql = readResourceFile("schemaForPostgresql.sql");
         }
 
         HikariDataSource dataSource = new HikariDataSource(hikariConfig);

@@ -42,7 +42,7 @@ public class App {
     }
 
     private static String getJdbcUrl() {
-        String port = System.getenv().getOrDefault("JdbcUrl", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
+        String port = System.getenv().getOrDefault("JDBC_DATABASE_URL", "jdbc:h2:mem:project;DB_CLOSE_DELAY=-1;");
         return port;
     }
 

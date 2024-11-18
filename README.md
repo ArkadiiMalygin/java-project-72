@@ -16,4 +16,4 @@ This is a web application that analyzes pages. It shows if a chosen page has a t
 1:Create new page for checking\
 2:Show all pages that r in the repo\
 3:Show induvidual page(with all checks that has been done)\
-4:Check page(multiple times)\
+4:Check page(multiple times)

@@ -96,52 +96,6 @@ public class UrlsController {
         var urlId = ctx.pathParamAsClass("id", Long.class).get();
         var url = UrlsRepository.find(urlId)
                 .orElseThrow(() -> new NotFoundResponse("Post not found"));
-//        System.out.println("+++++++++++++++++++++++++++++++++++++++++++++");
-//        System.out.println(Unirest.get("http://localhost:7070/urls/").asJson().getStatus());
-//        System.out.println(Unirest.get("http://localhost:7070/urls/").asJson().getBody());
-//        System.out.println("==============================================");
-//        System.out.println(Unirest.get("http://localhost:7070/urls/").asJson().getHeaders());
-//        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-
-//        Unirest.setObjectMapper(new ObjectMapper() {
-//            com.fasterxml.jackson.databind.ObjectMapper mapper
-//                    = new com.fasterxml.jackson.databind.ObjectMapper();
-//
-//            public String writeValue(Object value) {
-//                return mapper.writeValueAsString(value);
-//            }
-//
-//            public <T> T readValue(String value, Class<T> valueType) {
-//                return mapper.readValue(value, valueType);
-//            }
-//        });
-//        Unirest.get(url.getName()).header("User-Agent", "HttpClient").header("accept", "application/json").asJson();
-//        HttpResponse<JsonNode> jsonResponse = Unirest.get(url.getName()).header("User-Agent", "HttpClient")
-//        .header("accept", "application/json").asJson();
-        //Working part
-//        HttpResponse<String> jsonResponse = Unirest.get(url.getName()).header("User-Agent", "HttpClient")
-//                .header("accept", "application/json").asString();
-//        var check = new UrlCheck();
-//        check.setStatusCode(jsonResponse.getStatus()); //todo change it
-//        try {
-//            Document doc = Jsoup.connect(url.getName()).get(); //todo change it
-//            if (doc.select("h1").text().length() > LIMIT) {
-//                check.setH1(doc.select("h1").text().substring(0, LIMIT) + "...");
-//            } else {
-//                check.setH1(doc.select("h1").text());
-//            }
-//            if (doc.title().length() > LIMIT) {
-//                check.setTitle(doc.title().substring(0, LIMIT) + "...");
-//            } else {
-//                check.setTitle(doc.title());
-//            }
-//            check.setDescription(String.valueOf(doc.selectFirst("meta[name=description]")));
-//        } catch (IOException ignored) {
-//            if (jsonResponse.getStatus() == 200) {
-//                check.setStatusCode(418); //todo change it
-//            }
-//        }
-//        check.setUrlId(urlId);
         HttpResponse<String> response = Unirest.get(url.getName()).asString();
         Document doc = Jsoup.parse(response.getBody());
         var statusCode = response.getStatus();
